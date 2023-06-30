@@ -8,7 +8,31 @@ const server = http.createServer((req, res) => {
   //sending back the req
   //1. set the header of the reposnse which tell the browser which type of data is being sent
   res.setHeader("Content-Type", "text/html");
-  fs.readFile("./views/index.html", (err, data) => {
+
+  //For routing
+  let path = "./views/";
+  switch (req.url) {
+    case "/":
+      path += "index.html";
+      //setting status codes to let brwoser know about the status of the request
+      res.statusCode = 200;
+      break;
+    case "/about":
+      path += "about.html";
+      res.statusCode = 200;
+      break;
+    //this case is used to redirect the user to the new location
+    case "/about-me":
+      res.statusCode = 301; //status code is to let browser know that content has shifted to another location
+      res.setHeader("Location", "/about"); //redirecting the user
+      res.end();
+      break;
+    default:
+      path += "404.html";
+      res.statusCode = 400;
+  }
+
+  fs.readFile(path, (err, data) => {
     if (err) {
       console.log(err);
       res.end();
