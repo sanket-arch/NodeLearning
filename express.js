@@ -1,5 +1,7 @@
 const express = require("express");
 const mogoose = require("mongoose");
+//importing the route file to use it here
+const blogRoutes = require("./routes/blogRoutes");
 
 //URI for mongoDB URI
 const dbURI =
@@ -32,26 +34,10 @@ app.use((req, res, next) => {
 
 //Making static file accessible to the frontend
 app.use(express.static("public"));
-
+app.use(express.urlencoded({ extended: true }));
 //listening to the get request
 app.get("/", (req, res) => {
-  const blogs = [
-    {
-      title: "Yoshi finds eggs",
-      snippet: "Lorem ipsum dolor sit amet consectetur",
-    },
-    {
-      title: "Mario finds stars",
-      snippet: "Lorem ipsum dolor sit amet consectetur",
-    },
-    {
-      title: "How to defeat bowser",
-      snippet: "Lorem ipsum dolor sit amet consectetur",
-    },
-  ];
-  //render method takes two argument ejs path and a object
-  //object has key as variable name and value as data we want to pass down
-  res.render("index", { title: "Home", blogs });
+  res.redirect("/blogs");
 });
 
 app.get("/about", (req, res) => {
@@ -63,9 +49,9 @@ app.get("/about-us", (req, res) => {
   res.redirect("/about");
 });
 
-app.get("/blogs/create", (req, res) => {
-  res.render("create", { title: "Create a new blog" });
-});
+//blog route
+//creating a middleware to use the route
+app.use(blogRoutes);
 
 //404 page
 //use method is used to create a middleware
@@ -73,5 +59,5 @@ app.get("/blogs/create", (req, res) => {
 //this should be the very last in the file
 app.use((req, res) => {
   res.status(404);
-  res.sendFile("./views/404.html", { root: __dirname });
+  res.render("404", { title: "Not found" });
 });
