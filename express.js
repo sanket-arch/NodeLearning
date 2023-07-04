@@ -51,7 +51,7 @@ app.get("/about-us", (req, res) => {
 
 //blog route
 //creating a middleware to use the route
-app.use(blogRoutes);
+app.use("/blogs", blogRoutes);
 
 //404 page
 //use method is used to create a middleware

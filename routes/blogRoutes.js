@@ -1,42 +1,14 @@
 const express = require("express");
-const Blog = require("../models/blog");
-
+const blogController = require("../controllers/blogControllers");
 //using Router method which will attach all the routes to this object
 const router = express.Router();
 
-router.get("/blogs/create", (req, res) => {
-  res.render("create", { title: "Create a new blog" });
-});
+router.get('/create', blogController.blog_create_get);
+router.get('/', blogController.blog_index);
+router.post('/', blogController.blog_create_post);
+router.get('/:id', blogController.blog_details);
+router.delete('/:id', blogController.blog_delete);
 
-router.get("/blogs", (req, res) => {
-  Blog.find()
-    .sort({ createdAt: -1 })
-    .then((result) => {
-      res.render("index", { title: "Home", blogs: result });
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-});
-
-router.post("/blogs", (req, res) => {
-  //req.body is object which satify the blog model so we directly passed it else we can also do like
-  //const blog = new Blog({
-  //   title: req.body.title,
-  //   snippet: req.body.snippet,
-  //   body: req.body.body,
-  // });
-  const blog = new Blog(req.body);
-  blog
-    .save()
-    .then((result) => {
-      console.log("Seccesfully added");
-      res.redirect("/");
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-});
 
 /********************************Adding a new Blogs******************************************/
 
@@ -88,27 +60,5 @@ router.post("/blogs", (req, res) => {
       });
   });*/
 
-router.get("/blogs/:id", (req, res) => {
-  const id = req.params.id;
-  Blog.findById(id)
-    .then((result) => {
-      res.render("details", { blog: result, title: "Blog Details" });
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-});
-
-router.delete("/blogs/:id", (req, res) => {
-  const id = req.params.id;
-  Blog.findByIdAndDelete(id)
-    .then(() => {
-      //sending the jason data to the frontend
-      res.json({ redirect: "/blogs" });
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-});
 
 module.exports = router;
